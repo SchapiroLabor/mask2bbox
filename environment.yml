@@ -1,0 +1,13 @@
+name: mask2bbox
+channels:
+  - conda-forge
+  - defaults
+  - anaconda
+dependencies:
+  - "python=3.9"
+  - "numpy"
+  - "scikit-image"
+  - "matplotlib"
+  - "pip"
+  - pip:
+    - "mask2bbox"

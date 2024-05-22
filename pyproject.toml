@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mask2bbox"
+version = "0.0.1"
+authors = [
+  { name="Miguel A. Ibarra-Arellano", email="c180l058j@mozmail.com"},
+]
+description = "Gets the bounding boxes from a mask file."
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU Affero General Public License v3"
+]
+dependencies = [
+  "numpy",
+  "scikit-image",
+  "matplotlib",
+]
+
+license = "GNU Affero General Public License v3"
+
+keywords = ["cell", "mask", "bounding box"]
+
+[project.scripts]
+isolate-cells = "mask2bbox.scripts.isolate-cells:main"
+isolate-cells-from-file = "mask2bbox.scripts.isolate-cells-from-file:main"
+get-average-iou = "mask2bbox.scripts.get_average_iou:main"
+
+[project.urls]
+Homepage = "https://github.com/SchapiroLabor/mask2bbox"
+Issues = "https://github.com/SchapiroLabor/mask2bbox/issues"
