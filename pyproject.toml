@@ -28,8 +28,8 @@ dependencies = [
 keywords = ["cell", "mask", "bounding box"]
 
 [project.scripts]
-isolate-cells = "mask2bbox.scripts.isolate-cells:main"
-isolate-cells-from-file = "mask2bbox.scripts.isolate-cells-from-file:main"
+isolate-cells = "mask2bbox.scripts.isolate_cells:main"
+isolate-cells-from-file = "mask2bbox.scripts.isolate_cells_from_file:main"
 get-average-iou = "mask2bbox.scripts.get_average_iou:main"
 
 [project.urls]
