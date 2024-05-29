@@ -60,3 +60,7 @@ resize_factors = filtered_boxes.de(desired_ratio=0.7, size=(256, 256))
 # Extract the bounding boxes as images
 filtered_boxes.extract(resize_factors, size=(256, 256), output="path/to/save/images")
 ```
+
+## License
+
+mask2bbox offers a dual licensing mode the [GNU Affero General Public License v3.0](LICENSE) - see [LICENSE](LICENSE) and [ESSENTIAL_LICENSE_CONDITIONS.txt](ESSENTIAL_LICENSE_CONDITIONS.txt)
