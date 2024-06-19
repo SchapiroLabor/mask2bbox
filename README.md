@@ -3,6 +3,7 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mask2bbox?style=flat-square)](https://pypi.org/project/mask2bbox/)
 [![PyPI - License](https://img.shields.io/pypi/l/mask2bbox?style=flat-square)](https://pypi.org/project/mask2bbox/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/mask2bbox?style=flat-square)](https://pypi.org/project/mask2bbox/)
+[![main](https://github.com/saezlab/liana-py/actions/workflows/main.yml/badge.svg)](https://github.com/schapirolabor/mask2bbox/actions)
 
 For a given mask, gets the coordinates of bounding box of each element of the mask. It will also allow for more operations in the future.
 
