@@ -75,7 +75,7 @@ def get_arguments():
                         action="store", type=str, required=False, default=None,
                         help="Path to the output file with the bounding boxes.")
     output.add_argument("-sm", "--sample", dest="sample",
-                        action="store", type=int, required=False, default=5,
+                        action="store", type=int, required=False, default=0,
                         help="Working the same to `-osc` but randomly select n=5 cells to explore parameters.")
 
     tool = parser.add_argument_group(
@@ -162,8 +162,8 @@ def main():
 
         # Sample images if needed
         if args.sample > 0:
-            lg.debug(f"Saving sample bounding boxes             = {args.output_sample}")
-            mask_boxes = mask_boxes.sample(5)
+            lg.debug(f"Saving sample bounding boxes             = {args.sample}")
+            mask_boxes = mask_boxes.sample(args.sample)
 
         # Extract and save the single cell crops
         mask_boxes.extract(resize_factors=rf[mask_boxes.idx()],
