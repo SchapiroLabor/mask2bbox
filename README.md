@@ -16,7 +16,9 @@ pip install mask2bbox
 ## CLI
 
 ```bash
-python isolate-cells -h
+isolate-cells -h
+isolate-cells-from-file -h
+get-average-iou -h
 ```
 
 ## Usage
