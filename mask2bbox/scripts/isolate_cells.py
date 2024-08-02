@@ -14,7 +14,8 @@ from mask2bbox.version import __version__
 # Get arguments
 def get_arguments():
     # Start with the description
-    description = "Converts all the masks in a folder to bounding boxes."
+    description = ("From a mask and an image file obtains the single nuclei crops and saves them to an output folder "
+                   "as .png single cell images.")
 
     # Add parser
     parser = argparse.ArgumentParser(description=description)
@@ -38,21 +39,22 @@ def get_arguments():
 
     filters.add_argument("-e", "--expand", dest="expand",
                          action="store", type=int, required=False, default=0,
-                         help="Number of pixels to expand the bounding boxes.")
+                         help="Number of pixels to expand the bounding boxes. [default = 0]")
     filters.add_argument("-fv", "--filter-value", dest="filter_value",
                          action="store", type=float, required=False,
-                         default=0.0, nargs="+", help="Filter bounding boxes with a given value value.")
+                         default=0.0, nargs="+", help="Filter bounding boxes with a given value value. [default = 0.0]")
     filters.add_argument("-fo", "--filter-operator", dest="filter_operator",
                          action="store", type=str, required=False,
                          choices=["less_equal", "greater_equal", "equal", "not_equal"], default="greater_equal",
-                         help="Filter operator. Options =  [less_equal, greater_equal, equal, not_equal]")
+                         help="Filter operator. Options =  [less_equal, greater_equal, equal, not_equal] "
+                              "[default = greater_equal]")
     filters.add_argument("-ft", "--filter-type", dest="filter_type",
                          action="store", type=str, required=False,
                          choices=["area", "ratio", "center", "sides"], default="area",
-                         help="Filter type. Options =  [area, ratio, center, sides]")
+                         help="Filter type. Options =  [area, ratio, center, sides][default = area]")
     filters.add_argument("-fe", "--filter-edge", dest="filter_edge",
                          action="store_true", required=False,
-                         default=False, help="Filter bounding boxes on the edge of the image.")
+                         default=False, help="Filter bounding boxes on the edge of the image. [default = False]")
 
     # Add a group of arguments for re-sizing
     single_cell = parser.add_argument_group(
@@ -61,10 +63,10 @@ def get_arguments():
 
     single_cell.add_argument("-s", "--size", dest="size",
                              action="store", type=int, required=False, default=256,
-                             help="Final image size for the single cell crops.")
+                             help="Final image size for the single cell crops. [default = 256]")
     single_cell.add_argument("-rf", "--resize-factor", dest="resize_factor",
                              action="store", type=float, required=False,
-                             default=1.0, help="Resize factor for the single cell crops.")
+                             default=1.0, help="Resize factor for the single cell crops. [default = 1.0]")
 
     # Add a group of arguments for output
     output = parser.add_argument_group(
@@ -73,10 +75,11 @@ def get_arguments():
 
     output.add_argument("-o", "--output", dest="output",
                         action="store", type=str, required=False, default=None,
-                        help="Path to the output file with the bounding boxes.")
+                        help="Path to the output file with the bounding boxes. [default = None]")
     output.add_argument("-sm", "--sample", dest="sample",
                         action="store", type=int, required=False, default=0,
-                        help="Working the same to `-osc` but randomly select n=5 cells to explore parameters.")
+                        help="Working the same to `-osc` but randomly select n=5 cells to explore parameters. "
+                             "[default = 0]")
 
     tool = parser.add_argument_group(
         title="Tool",
@@ -169,7 +172,8 @@ def main():
         mask_boxes.extract(resize_factors=rf[mask_boxes.idx()],
                            size=args.size,
                            rescale_intensity=True,
-                           output=args.output)
+                           output=args.output / args.mask.name.split(".")[0])
+
 
 # Run main
 if __name__ == "__main__":
