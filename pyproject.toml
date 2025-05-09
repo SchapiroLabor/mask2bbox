@@ -29,7 +29,7 @@ dependencies = [
 keywords = ["cell", "mask", "bounding box"]
 
 [tool.setuptools]
-packages = ["codex2mc"]
+packages = ["mask2bbox"]
 include-package-data = true
 
 [project.scripts]
