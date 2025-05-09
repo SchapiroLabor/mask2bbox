@@ -8,7 +8,7 @@ import numpy as np
 # Import local libraries
 from mask2bbox._bboxes import BBoxes
 from mask2bbox.logger import set_logger
-from mask2bbox.version import __version__
+from mask2bbox import __version__
 
 
 # Get arguments

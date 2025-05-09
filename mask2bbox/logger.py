@@ -1,46 +1,36 @@
 import logging
 import sys
 
-
-def set_logger(logger=None,
+def set_logger(name=__name__,
                log_level='info',
-               log_format='%(asctime)s - %(levelname)s - %(message)s'):
-    """ Function to set up the handle error logging.
-
-    logger (obj) = a logger object (optional, creates a default logger if not provided)
-    log_level (str) = level of information to print out, options are {info, debug} [Default: info]
-    log_format (str) = format of the log messages [Default: '%(asctime)s - %(levelname)s - %(message)s']
-
+               log_format=None) -> logging.Logger:
     """
-    # Create a default logger if not provided
-    if logger is None:
-        logger = logging.getLogger(__name__)
+    Sets up a logger with a single StreamHandler to stdout.
 
-    # Determine log level
-    if log_level == 'info':
-        _level = logging.INFO
-    elif log_level == 'debug':
-        _level = logging.DEBUG
-    else:
-        raise ValueError(f"Log level {log_level} not recognized.")
+    Args:
+        name (str): The name of the logger (usually __name__).
+        log_level (str): Logging level as a string (e.g., 'info', 'debug', 'error').
+        log_format (str, optional): Optional custom logging format. Defaults to a standard format.
 
-    # Set the level in logger
-    logger.setLevel(_level)
+    Returns:
+        logging.Logger: Configured logger instance.
+    """
 
-    # Set the log format
-    logfmt = logging.Formatter(log_format)
+    # Get logger and prevent duplicate handlers
+    logger = logging.getLogger(name)
+    if logger.hasHandlers():
+        return logger
 
-    # Set logger output to STDOUT and STDERR
-    loghandler = logging.StreamHandler(stream=sys.stdout)
-    loghandler.setLevel(_level)
-    loghandler.setFormatter(logfmt)
+    # Converts string 'info' into logging.INFO
+    level = getattr(logging, log_level.upper(), logging.INFO)
+    logger.setLevel(level)
 
-    errhandler = logging.StreamHandler(stream=sys.stderr)
-    errhandler.setLevel(logging.ERROR)
-    errhandler.setFormatter(logfmt)
+    # Set logger format
+    log_format = log_format or '%(asctime)s - %(levelname)s - %(message)s'
 
-    # Add handler to the main logger
-    logger.addHandler(loghandler)
-    logger.addHandler(errhandler)
+    # Apply formating and plug it into the logger
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(logging.Formatter(log_format))
+    logger.addHandler(handler)
 
     return logger

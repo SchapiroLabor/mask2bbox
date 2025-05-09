@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mask2bbox"
-version = "0.0.23"
+version = "0.0.24"
 authors = [
   { name="Miguel A. Ibarra-Arellano", email="c180l058j@mozmail.com"},
 ]
@@ -27,6 +27,10 @@ dependencies = [
 ]
 
 keywords = ["cell", "mask", "bounding box"]
+
+[tool.setuptools]
+packages = ["codex2mc"]
+include-package-data = true
 
 [project.scripts]
 isolate-cells = "mask2bbox.scripts.isolate_cells:main"

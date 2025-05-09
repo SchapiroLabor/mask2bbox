@@ -1,3 +1,9 @@
+"""_bboxes.py
+
+Provides the BBoxes class for handling bounding boxes derived from labeled masks.
+Supports creation from mask arrays, export to CSV, and overlap detection.
+"""
+
 # Import libraries
 import argparse
 from pathlib import Path
@@ -8,7 +14,7 @@ import numpy as np
 # Import local libraries
 from mask2bbox._bboxes import BBoxes
 from mask2bbox.logger import set_logger
-from mask2bbox.version import __version__
+from mask2bbox import __version__
 
 
 # Get arguments

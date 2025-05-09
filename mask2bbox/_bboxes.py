@@ -1,5 +1,4 @@
-# =============================================================================
-# Import third-party libraries
+# Library imports
 from numpy import ndarray
 from skimage import io, transform, exposure
 import numpy as np
@@ -10,13 +9,24 @@ from typing import Union, Tuple
 
 # Create a bbox class
 class BBoxes:
-    """Class to calculate and represent bounding boxes from a mask file"""
+    """
+    Container for bounding boxes extracted from segmentation masks.
+
+    This class holds bounding box coordinates and optionally the corresponding
+    mask and image arrays. It provides utilities to convert, save, and analyze
+    bounding boxes including detection of overlapping regions.
+
+    Attributes:
+        bboxes (np.ndarray): Array of bounding boxes with shape (N, 4),
+            where each box is (min_row, min_col, max_row, max_col).
+        mask (np.ndarray or None): Optional mask from which the bounding boxes were extracted.
+        image (np.ndarray or None): Optional image corresponding to the mask.
+    """
     bbox: np.ndarray
 
     # Constructor
     def __init__(self, bboxes, mask=None, image=None) -> None:
         """
-
         :type bboxes: np.ndarray
         :type mask: np.ndarray
         :param bboxes: A numpy array with the bounding boxes.
@@ -33,11 +43,18 @@ class BBoxes:
     def from_mask(cls,
                   mask: Union[str, Path],
                   image: Union[str, Path, None] = None) -> object:
+
         """
         Calculates the bounding boxes from the mask file.
-        :param mask: A numpy array with the mask.
-        :param image: A numpy array with the image.
-        :return: Object of type BBoxes.
+        Args:
+            mask (Union[str, Path]): Path to the mask file.
+            image (Union[str, Path, None]): Path to the image file.
+
+        Returns:
+            object: Object of type BBoxes.
+
+        Raises:
+            ValueError: If the mask contains no elements.
         """
 
         # Read in the mask file
@@ -76,10 +93,13 @@ class BBoxes:
             box2: np.array) -> float:
         """
         Calculates the IoU for two bounding boxes.
-        :param box1: Numpy array with the first bounding box.
-        :param box2: Numpy array with the second bounding box.
-        :return: A float with the IoU value between the two bounding boxes.
+        Args:
+            box1 (np.array): Numpy array with the first bounding box.
+            box2 (np.array): Numpy array with the second bounding box.
+        Returns:
+            float: A float with the IoU value between the two bounding boxes.
         """
+
         # Calculate the intersection box
         x1 = max(box1[1], box2[1])
         x2 = min(box1[2], box2[2])
@@ -109,11 +129,14 @@ class BBoxes:
     @property
     def iou_matrix(self) -> np.array:
         """
-        Returns the IoU matrix for the bounding boxes.
-        :return: A numpy array with the IoU values for each bounding box pair.
+        Returns the IoU matrix for all the bounding boxes.
+        Returns:
+            np.array: A numpy array with the IoU values for each bounding box pair.
         """
+        # Get the length of the bounding boxes
         n = self.__len__()
-        # compute the size of the matrix based on the length of the array
+
+        # Compute the size of the matrix based on the length of the array
         size = n * (n - 1) // 2
 
         # create a 1D array of zeros to hold the upper triangular matrix
@@ -136,7 +159,8 @@ class BBoxes:
     def are_overlapping(self) -> np.array:
         """
         Returns a boolean array indicating whether the bounding boxes are overlapping.
-        :return: A numpy array with boolean values for each bounding box pair.
+        Returns:
+            np.array: A numpy array with boolean values for each bounding box pair.
         """
         # Get the IoU matrix
         overlapping = np.where(self.iou_matrix > 0)
@@ -152,11 +176,13 @@ class BBoxes:
 
     def __getitem__(self, item) -> ndarray:
         """
-        Returns the bounding box at the given index. The index starts at 1.
-        No negative indexing is allowed.
-
-        :param item: Index of the bounding box to return.
-        :return: Numpy array with the bounding box.
+        Returns the bounding box at the given index. The index starts at 1, no negative indexing is allowed.
+        Args:
+            item: Index of the bounding box to return.
+        Returns:
+            ndarray: Numpy array with the bounding box.
+        Raises:
+            IndexError: If the index is less than or equal to 0.
         """
         if item <= 0:
             raise IndexError("Index must be greater than 0, use the mask id to get the bounding box. "
@@ -195,8 +221,10 @@ class BBoxes:
                n: int = 5) -> object:
         """
         Randomly selects n bounding boxes from the object.
-        :param n: Number of bounding boxes to select [default=5].
-        :return: Object of type BBoxes with the selected bounding boxes.
+        Args:
+            n (int): Number of bounding boxes to select [default=5].
+        Returns:
+            object: Object of type BBoxes with the selected bounding boxes.
         """
         # Randomly select n bounding boxes
         idx = np.random.choice(self.bboxes.shape[0], n, replace=False)
@@ -208,8 +236,10 @@ class BBoxes:
                n: int = 0) -> object:
         """
         Expands the bounding boxes by n pixels.
-        :param n: Integer with the number of pixels to expand the bounding boxes.
-        :return: Object of type BBoxes with the expanded bounding boxes.
+        Args:
+            n (int): Integer with the number of pixels to expand the bounding boxes.
+        Returns:
+            object: Object of type BBoxes with the expanded bounding boxes.
         """
         # Expand the bounding boxes by n pixels, but not beyond the image size.
         expanded = np.array(list(map(lambda x: np.array([x[0],
@@ -222,22 +252,27 @@ class BBoxes:
     def identities(self) -> np.array:
         """
         Returns the identities of the bounding boxes.
-        :return: numpy array with the identities of the bounding boxes.
+        Returns:
+            np.array: A numpy array with the identities of the bounding boxes.
         """
         return self.bboxes[:, 0]
 
     def idx(self) -> np.array:
         """
         Returns the indexes in base 0 for the bounding boxes.
-        :return: numpy array with the indexes of the bounding boxes.
+        Returns:
+            np.array: A numpy array with the indexes of the bounding boxes.
         """
         return self.bboxes[:, 0] - 1
 
+    ###############################################
     # Bounding box properties
+    ###############################################
     def get_sides(self) -> np.array:
         """
         Returns the sides of the bounding boxes.
-        :return: numpy array with the sides of the bounding boxes.
+        Returns:
+            np.array: A numpy array with the sides of the bounding boxes.
         """
         # Get the sides of the bounding boxes
         return np.array([self.bboxes[:, 0],
@@ -247,7 +282,8 @@ class BBoxes:
     def get_areas(self) -> np.ndarray:
         """
         Returns the areas of the bounding boxes.
-        :return: numpy array with the areas of the bounding boxes.
+        Returns:
+            np.ndarray: A numpy array with the areas of the bounding boxes.
         """
         # Get the areas of the bounding boxes
         return np.array([self.bboxes[:, 0],
@@ -257,7 +293,8 @@ class BBoxes:
     def get_ratios(self) -> np.ndarray:
         """
         Returns the aspect ratios of the bounding boxes.
-        :return: numpy array with the aspect ratios of the bounding boxes.
+        Returns:
+            np.ndarray: A numpy array with the aspect ratios of the bounding boxes.
         """
         # Get the aspect ratios of the bounding boxes
         ratios = np.array((self.bboxes[:, 2] - self.bboxes[:, 1]) / (self.bboxes[:, 4] - self.bboxes[:, 3]))
@@ -267,7 +304,8 @@ class BBoxes:
     def get_centers(self) -> np.ndarray:
         """
         Returns the centers of the bounding boxes.
-        :return: numpy array with the centers of the bounding boxes.
+        Returns:
+            np.ndarray: A numpy array with the centers of the bounding boxes.
         """
         # Get the centers of the bounding boxes
         return np.array([self.bboxes[:, 0],
@@ -278,8 +316,12 @@ class BBoxes:
             value: str = "area") -> np.ndarray:
         """
         Returns the values of the bounding boxes based on the given parameter.
-        :param value: Mode to use for getting the values of the bounding boxes [default="area"].
-        :return:
+        Args:
+            value (str): Mode to use for getting the values of the bounding boxes [default="area"].
+        Returns:
+            np.ndarray: A numpy array with the values of the bounding boxes.
+        Raises:
+            NotImplementedError: If the value parameter is not area, ratio, center or sides.
         """
         # Get the values of the bounding boxes
         if value == 'area':
@@ -300,7 +342,8 @@ class BBoxes:
         """
         Returns the overlapping pairs of bounding boxes. The first array contains the identities, the second the IoU
         values.
-        :return: A tuple of two numpy arrays.
+        Returns:
+            np.array: A numpy array with the overlapping pairs of bounding boxes.
         """
         # Get the IoU matrix
         iou_matrix = self.iou_matrix
@@ -317,8 +360,10 @@ class BBoxes:
                indexes: np.ndarray) -> object:
         """
         Subset boxes from the BBox object.
-        :param indexes: Numpy array with the cellIDs/maskIDs to subset the bounding boxes.
-        :return: Object of type BBoxes with the subset bounding boxes.
+        Args:
+            indexes (np.ndarray): Numpy array with the maskIDs to subset the bounding boxes.
+        Returns:
+            object: Object of type BBoxes with the subset bounding boxes.
         """
         # Find indices where the values in the first column match the filter_array
         return BBoxes(self.bboxes[np.isin(self.bboxes[:, 0], indexes)], self.mask, self.image)
@@ -330,10 +375,12 @@ class BBoxes:
                value: Union[float, Tuple[float, float]] = 0) -> object:
         """
         Filter the bounding boxes based on the given parameters
-        :param by: Choose between area, ratio, center or dims to filter the bounding boxes [default="area"].
-        :param operator: Numpy comparison operator to use [default=np.greater_equal]
-        :param value: Value to be used for filtering [default=0].
-        :return: np.ndarray
+        Args:
+            by (str): Choose between area, ratio, center or dims to filter the bounding boxes [default="area"].
+            operator (np.ufunc): Numpy comparison operator to use [default=np.greater_equal]
+            value (Union[float, Tuple[float, float]]): Value to be used for filtering [default=0].
+        Returns:
+            object: Object of type BBoxes with the filtered bounding boxes.
         """
 
         # Get the values of the bounding boxes that are filtered
@@ -350,7 +397,8 @@ class BBoxes:
     def remove_from_edge(self) -> object:
         """
         Removes the bounding boxes that are on the edge of the image.
-        :return: BBoxes object with the bounding boxes that are not on the edge of the image.
+        Returns:
+            object: BBoxes object with the bounding boxes that are not on the edge of the image.
         """
         # Removes the bounding boxes that are on the edge of the image
         idx = np.where((self.bboxes[:, 1] > 0) &
@@ -368,12 +416,13 @@ class BBoxes:
                            lw: int = 1) -> None:
         """
         Helper function to draw a bounding box on an axis.
-
-        :param ax: Axis to draw the bounding box on.
-        :param bbox: Bounding box to draw.
-        :param color: Color to use for drawing the bounding box.
-        :param lw: Width of the lines to use for drawing the bounding box.
-        :return: None
+        Args:
+            ax (plt.Axes): Axis to draw the bounding box on.
+            bbox (np.ndarray): Bounding box to draw.
+            color (str): Color to use for drawing the bounding box.
+            lw (int): Width of the lines to use for drawing the bounding box.
+        Returns:
+            None
         """
         ax.plot([bbox[3], bbox[4]], [bbox[1], bbox[1]], color=color, linewidth=lw)  # Top
         ax.plot([bbox[3], bbox[4]], [bbox[2], bbox[2]], color=color, linewidth=lw)  # Bottom
@@ -392,12 +441,17 @@ class BBoxes:
         selected the bounding boxes are drawn on a numpy array and returned. If matplotlib is selected the bounding
         boxes are drawn as a plot with matplotlib and the figure is returned.
 
-        :param idx: Index of the bounding box to draw, if None selected draws them all [default=None].
-        :param to: Whether to draw the bounding boxes on the ["mask"|"image"] [default="mask"].
-        :param method: Method to use for drawing the bounding boxes ["matplotlib"|"numpy"] [default="matplotlib"].
-        :param show: Whether to show the plot or not [default=True].
-        :param save: Path to the output file [default=None].
-        :return: None, numpy array or matplotlib figure.
+        Args:
+            idx (int): Index of the bounding box to draw, if None selected draws them all [default=None].
+            to (str): Whether to draw the bounding boxes on the ["mask"|"image"] [default="mask"].
+            method (str): Method to use for drawing the bounding boxes ["matplotlib"|"numpy"] [default="matplotlib"].
+            show (bool): Whether to show the plot or not [default=True].
+            save (Union[str, None, Path]): Path to the output file [default=None].
+        Returns:
+            Union[None, np.array, Tuple]: None, numpy array or matplotlib figure.
+        Raises:
+            ValueError: If the image is None and the to parameter is set to image.
+            NotImplementedError: If the method parameter is not numpy or matplotlib.
         """
 
         # Check if image is not None
@@ -469,10 +523,11 @@ class BBoxes:
                                   size: int) -> np.ndarray:
         """
         Calculates the resizing factor for each bounding box to get the desired image size / cell size ratio
-
-        :param desired_ratio: Desired image size / cell size ratio.
-        :param size: Desired image size.
-        :return: List of resizing factors for each bounding box.
+        Args:
+            desired_ratio (float): Desired image size / cell size ratio.
+            size (int): Desired image size.
+        Returns:
+            np.ndarray: List of resizing factors for each bounding box.
         """
         return np.array(list(map(lambda x: desired_ratio / (max(x[2] - x[1], x[4] - x[3]) / size), self.bboxes)))
 
@@ -481,9 +536,11 @@ class BBoxes:
                   size: Tuple[int, int]) -> np.ndarray:
         """
         Makes an image square to a desire size without changing the ratio
-
-        :param size: Final desired size
-        :return: Image of the desired sized, with added padding where needed
+        Args:
+            sc (np.ndarray): Image to pad and crop.
+            size (Tuple[int, int]): Final desired size.
+        Returns:
+            np.ndarray: Image of the desired sized, with added padding where needed.
         """
         ox = sc.shape[0]
         oy = sc.shape[1]
@@ -509,37 +566,45 @@ class BBoxes:
         sc = sc[0 + dif_crop[0]:ox - dif_crop[1], 0 + dif_crop[2]:oy - dif_crop[3]]
 
         # Assuming the image is smaller than the desired size
-        sc = np.pad(sc, [(dif_pad[0], dif_pad[1]), (dif_pad[2], dif_pad[3])], mode="constant")
+        sc = np.pad(sc,[(dif_pad[0], dif_pad[1]), (dif_pad[2], dif_pad[3])], mode="constant")
 
         return sc
 
-    def grab_pixels_from(self,
-                         idx: int,
-                         source: str = "mask",
-                         resize_factor: Union[float, None] = None,
-                         size: Tuple[int, int] = None,
-                         rescale_intensity: bool = False
-                         ) -> np.ndarray:
+    def get_pixels_from(self,
+                        mask_id: int,
+                        source: str = "mask",
+                        resize_factor: Union[float, None] = None,
+                        size: Tuple[int, int] = None,
+                        rescale_intensity: bool = False
+                        ) -> np.ndarray:
         """
         Grabs the pixels associated to a single bounding box. The pixels can be grabbed from the mask or the image.
-
-        :param idx: Index of the bounding box to grab.
-        :param source: Whether to return the mask or the image associated with the bounding box [default="mask"].
-        :param resize_factor: Desired ratio of the bounding box, takes the maximum of the width and height and resizes
-        the image to the desired proportion (compared to the size value) while keeping the original aspect ratio.
-        :param size: Desired size of the bounding box, final size of the image.
-        :param rescale_intensity: Whether to rescale the intensity of the image or not [default=False].
-        :return: Mask/image associated with the bounding box.
+        Args:
+            mask_id (int): Mask ID of the bounding box of interest.
+            source (str): Source from where to take the pixels from the mask or the image associated.
+            resize_factor (Union[float, None]): Desired ratio of the bounding box, takes the maximum of the width and
+            height and resizes the image to the desired proportion (compared to the size value) while keeping the
+            original aspect ratio.
+            size (Tuple[int, int]): Desired size of the bounding box, final size of the image.
+            rescale_intensity (bool): Whether to rescale the intensity of the image or not [default=False].
+        Returns:
+            np.ndarray: Mask/image associated with the bounding box.
+        Raises:
+            ValueError: If the image is None and the source is set to image.
+            NotImplementedError: If the source parameter is not mask or image.
         """
+        # Make sure the mask_id is within the range of the bounding boxes
+        mask_id = mask_id - 1
+
         # Check if image is not None
         if self.image is None and source == "image":
             raise ValueError("Image is None, please provide an image. instance.image = 'path/to/image.ome.tif'")
 
         # Get the single cell image from either mask or image, if neither is selected raise an error
         if source == "mask":
-            sc = self.mask[self.bboxes[idx][1]:self.bboxes[idx][2], self.bboxes[idx][3]:self.bboxes[idx][4]]
+            sc = self.mask[self.bboxes[mask_id][1]:self.bboxes[mask_id][2], self.bboxes[mask_id][3]:self.bboxes[mask_id][4]]
         elif source == "image":
-            sc = self.image[self.bboxes[idx][1]:self.bboxes[idx][2], self.bboxes[idx][3]:self.bboxes[idx][4]]
+            sc = self.image[self.bboxes[mask_id][1]:self.bboxes[mask_id][2], self.bboxes[mask_id][3]:self.bboxes[mask_id][4]]
         else:
             raise NotImplementedError("Invalid parameter, please select from 'mask' or 'image'.")
 
@@ -565,13 +630,17 @@ class BBoxes:
 
         """
         Isolates the bounding boxes from the image and saves them to the given output folder.
-
-        :param resize_factors: Desired ratio of the bounding box, takes the maximum of the width and height and resizes
-        the image to the desired proportion (compared to the size value) while keeping the original aspect ratio.
-        :param size: Desired size of the bounding box, final size of the image.
-        :param rescale_intensity: Whether to rescale the intensity of the image or not.
-        :param output: Output folder to save the images to.
+        Args:
+            resize_factors (list): Desired ratio of the bounding box, takes the maximum of the width and height and
+            resizes the image to the desired proportion (compared to the size value) while keeping the original aspect
+            ratio.
+            size (Tuple[int, int]): Desired size of the bounding box, final size of the image.
+            rescale_intensity (bool): Whether to rescale the intensity of the image or not.
+            output (Union[str, Path]): Output folder to save the images to.
+        Returns:
+            None
         """
+        # Check if the output is a string or a Path
         if isinstance(output, str):
             output = Path(output)
 
@@ -598,8 +667,11 @@ class BBoxes:
         """
         Saves the IoU matrix of all the bounding boxes in the object into a csv file.
         It saves two files: one with the pairs and one with the values.
-        :param output_file: Path to the output file(s).
-        :return: None
+
+        Args:
+            output_file (Union[str, Path]): Path to the output file(s).
+        Returns:
+            None
         """
         pairs, values = self.get_overlapping_pairs()
 
@@ -611,8 +683,10 @@ class BBoxes:
                         output_file: str) -> None:
         """
         Saves the IoU matrix of all the bounding boxes in the object into a csv file.
-        :param output_file: Path to the output file.
-        :return: None
+        Args:
+            output_file (str): Path to the output file.
+        Returns:
+            None
         """
         # Save the IoU matrix to a csv file
         np.savetxt(output_file, self.iou_matrix, delimiter=",", fmt="%.2f")
@@ -621,8 +695,10 @@ class BBoxes:
                  output_file: str) -> None:
         """
         Saves the bounding boxes in the object to a csv file.
-        :param output_file: Path to the output file.
-        :return:
+        Args:
+            output_file (str): Path to the output file.
+        Returns:
+            None
         """
         # Save the bounding boxes to a csv file
         np.savetxt(output_file, self.bboxes, delimiter=",", fmt="%d")
