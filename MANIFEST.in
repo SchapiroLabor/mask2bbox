@@ -1,2 +1,6 @@
-recursive-include src *.py
+recursive-include mask2bbox *.py
 recursive-include tests *.py
+include LICENSE
+include README.md
+include ESSENTIAL_LICENSE_CONDITIONS.txt
+global-exclude __pycache__ *.py[cod]

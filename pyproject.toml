@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mask2bbox"
-version = "0.0.26"
+version = "0.0.27"
 authors = [
   { name="Miguel A. Ibarra-Arellano", email="c180l058j@mozmail.com"},
 ]
@@ -29,7 +29,7 @@ dependencies = [
 keywords = ["cell", "mask", "bounding box"]
 
 [tool.setuptools]
-packages = ["mask2bbox"]
+packages = ["mask2bbox", "mask2bbox.scripts"]
 include-package-data = true
 
 [project.scripts]
