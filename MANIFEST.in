@@ -1,6 +1,11 @@
-recursive-include mask2bbox *.py
-recursive-include tests *.py
+# Top-level files
 include LICENSE
 include README.md
 include ESSENTIAL_LICENSE_CONDITIONS.txt
+
+# All .py files in the package
+recursive-include mask2bbox *.py
+recursive-include tests *.py
+
+# Exclude compiled files and caches
 global-exclude __pycache__ *.py[cod]
