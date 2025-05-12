@@ -44,6 +44,15 @@ def get_arguments():
                              action="store", type=float, required=False,
                              default=1.0, help="Resize factor for the single cell crops.")
 
+    # Argument group for tool specific arguments
+    tool = parser.add_argument_group(
+        title="Tool",
+        description="Tool behaviour"
+    )
+    tool.add_argument("-t", "--threshold", dest="threshold",
+                      action="store", type=float, required=False, default=0.5,
+                      help="Threshold for the bounding boxes [default=0.5].")
+
     # Add a group of arguments for output
     output = parser.add_argument_group(
         title="Output",
@@ -122,10 +131,7 @@ def main():
     }
 
     # Get me the indexes of values greater than a threshold value
-    threshold = 0.3
-    lg.info(f"Number of cells with an overlap bigger than {threshold} = {len(np.unique(pairs[np.where(values > threshold)]))}")
-
-    threshold = 0.5
+    threshold = args.threshold
     lg.info(f"Number of cells with an overlap bigger than {threshold} = {len(np.unique(pairs[np.where(values > threshold)]))}")
 
     # Get the average iou over the upper triangular matrix
