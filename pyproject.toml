@@ -29,8 +29,11 @@ dependencies = [
 keywords = ["cell", "mask", "bounding box"]
 
 [tool.setuptools]
-packages = ["mask2bbox", "mask2bbox.scripts"]
 include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mask2bbox*"]
 
 [project.scripts]
 isolate-cells = "mask2bbox.scripts.isolate_cells:main"
