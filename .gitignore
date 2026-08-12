@@ -168,4 +168,4 @@ cython_debug/
 .envrc
 
 # AI
-.claude
+.claude/*

@@ -1,0 +1,14 @@
+[workspace]
+authors = ["Miguel A. Ibarra-Arellano <ibarrarellano@gmail.com>"]
+channels = ["conda-forge"]
+name = "mask2bbox"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = ">=3.9"
+numpy = ">=2.4.3,<3"
+matplotlib = ">=3.10.8,<4"
+scikit-image = ">=0.26.0,<0.27"
